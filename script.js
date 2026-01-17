@@ -10,13 +10,12 @@ buttons.forEach((button) => {
   button.addEventListener("click", () => {
     let value = button.getAttribute("data-key");
     handleInput(value);
-    triggerFlashEffect(value);
   });
 });
 
 document.addEventListener("keydown", (event) => {
   let key = event.key;
-  if (key === "Escape") key = "AC"; 
+  if (key === "Escape") key = "AC";
   if (key === "Enter") key = "=";
   if (key === "Backspace") key = "CE";
 
@@ -71,6 +70,7 @@ function isNumber(value) {
 }
 
 function inputNumber(num) {
+
   if (waitingForSecond) {
     currentInput = num;
     waitingForSecond = false;
@@ -86,24 +86,21 @@ function inputDecimal() {
     return;
   }
 
-  if (!currentInput.includes(".")) {
+  if ( !currentInput.includes(".")) {
     currentInput += ".";
   }
 }
 
 function handleOperator(nextOperator) {
   const inputValue = parseFloat(currentInput);
- 
-  if (isNaN(inputValue) && nextOperator !== "-" ) return;
-
-  
+  if (isNaN(inputValue) && nextOperator !== "-") return;
 
   // Special case: Allow negative numbers
   if (nextOperator === "-" && isNaN(inputValue)) {
     currentInput = "-";
     return;
   }
-  
+
   updateOperatorState(nextOperator);
 
   if (operator && waitingForSecond) {
@@ -137,19 +134,19 @@ function calculateResult() {
   if (operator === null || waitingForSecond) return;
 
   const inputValue = parseFloat(currentInput);
-  const result = calculate(firstOperand, inputValue, operator);
+  const result = String(calculate(firstOperand, inputValue, operator));
 
   if (result === "Error: Zero Division") {
     currentInput = result;
     firstOperand = null;
   } else {
     // Round to prevent long decimals (e.g. 0.1 + 0.2 = 0.3000000004)
-    currentInput = String(Math.round(result * 10000000) / 10000000);
+    currentInput =  result; // This makes it a String (SAFE);
   }
 
   firstOperand = null;
   operator = null;
-  waitingForSecond = false;
+  waitingForSecond = true;
 }
 
 function clearAll() {
@@ -161,11 +158,20 @@ function clearAll() {
 }
 
 function deleteLast() {
+  currentInput = display.value;
   currentInput = currentInput.slice(0, -1);
+  waitingForSecond = false;
 }
 
 function updateDisplay() {
-  display.value = currentInput;
+  let value = parseFloat(currentInput);
+
+  if(currentInput.includes(".") && currentInput.split(".")[1].length > 3){
+    display.value = String(Math.round(value * 1000) / 1000);
+  }else{
+    display.value = currentInput;
+  }
+
 }
 
 function triggerFlashEffect(key) {
@@ -183,7 +189,6 @@ function triggerFlashEffect(key) {
   }
 }
 
-// --- NEW HELPER FUNCTION ---
 function updateOperatorState(activeOp) {
   // 1. Remove the 'active-operator' class from ALL buttons first
   const buttons = document.querySelectorAll("button");
