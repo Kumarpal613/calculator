@@ -1,5 +1,7 @@
 const display = document.querySelector(".display");
 const buttons = document.querySelectorAll("button");
+const expressionDiv = document.getElementById("expression");
+let accumulator = ""; 
 
 let currentInput = " ";
 let firstOperand = null;
@@ -73,6 +75,9 @@ function inputNumber(num) {
 
   if (waitingForSecond) {
     currentInput = num;
+    if(operator === null){
+      accumulator = "";
+    }
     waitingForSecond = false;
   } else {
     currentInput = currentInput === "0" ? num : currentInput + num;
@@ -104,18 +109,20 @@ function handleOperator(nextOperator) {
   updateOperatorState(nextOperator);
 
   if (operator && waitingForSecond) {
+    accumulator = accumulator.slice(0, -2) + nextOperator + " ";
     operator = nextOperator;
-    return;
+  }else{
+    accumulator += currentInput + " " + nextOperator + " ";
+    if (firstOperand === null) {
+      firstOperand = inputValue;
+    } else if (operator) {
+      const result = calculate(firstOperand, inputValue, operator);
+      currentInput = String(result);
+      firstOperand = result;
+    }
   }
 
-  if (firstOperand === null) {
-    firstOperand = inputValue;
-  } else if (operator) {
-    const result = calculate(firstOperand, inputValue, operator);
-    currentInput = String(result);
-    firstOperand = result;
-  }
-
+  expressionDiv.innerText = accumulator;
   waitingForSecond = true;
   operator = nextOperator;
 }
@@ -131,6 +138,8 @@ function calculate(first, second, op) {
 
 function calculateResult() {
   updateOperatorState(null);
+  expressionDiv.innerText = accumulator + currentInput + " =";
+
   if (operator === null || waitingForSecond) return;
 
   const inputValue = parseFloat(currentInput);
@@ -140,8 +149,7 @@ function calculateResult() {
     currentInput = result;
     firstOperand = null;
   } else {
-    // Round to prevent long decimals (e.g. 0.1 + 0.2 = 0.3000000004)
-    currentInput =  result; // This makes it a String (SAFE);
+    currentInput =  result; 
   }
 
   firstOperand = null;
@@ -155,6 +163,8 @@ function clearAll() {
   firstOperand = null;
   operator = null;
   waitingForSecond = false;
+  accumulator = "";
+  expressionDiv.innerText = "";
 }
 
 function deleteLast() {
@@ -200,3 +210,5 @@ function updateOperatorState(activeOp) {
     if (activeBtn) activeBtn.classList.add("active-operator");
   }
 }
+
+

@@ -231,3 +231,15 @@ button.key-equal.pressed {
   color: rgb(84, 86, 21) !important;
   box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.3) !important; /* "Pressed in" look */
 }
+
+.expression-display {
+  grid-area: header; /* Or create a new grid area */
+  text-align: right;
+  color: #888;
+  font-size: 0.9rem;
+  height: 20px;
+  padding: 0 15px;
+  margin-top: 10px;
+  overflow: hidden;
+  white-space: nowrap;
+}
