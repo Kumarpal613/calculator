@@ -125,6 +125,8 @@ function handleOperator(nextOperator) {
   expressionDiv.innerText = accumulator;
   waitingForSecond = true;
   operator = nextOperator;
+
+  expressionDiv.scrollLeft = expressionDiv.scrollWidth;
 }
 
 function calculate(first, second, op) {
@@ -155,6 +157,7 @@ function calculateResult() {
   firstOperand = null;
   operator = null;
   waitingForSecond = true;
+  expressionDiv.scrollLeft = expressionDiv.scrollWidth;
 }
 
 function clearAll() {
@@ -181,6 +184,8 @@ function updateDisplay() {
   }else{
     display.value = currentInput;
   }
+
+  display.scrollLeft = display.scrollWidth;
 
 }
 
