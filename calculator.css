@@ -1,0 +1,183 @@
+:root {
+    color-scheme: dark;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #1a1a1a;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.calculator {
+    width: 300px;
+    padding: 20px;
+    background-color: #2b2b2b;
+    border-radius: 15px;
+    box-shadow: 0 15px 25px rgba(0,0,0,0.5);
+    
+    display: grid;
+    /* 4 Columns */
+    grid-template-columns: repeat(4, 1fr);
+    /* Space between keys */
+    gap: 10px;
+    
+    /* THE LAYOUT MAP */
+    grid-template-areas:
+        "header header header header"
+        "screen screen screen screen"
+        "clear  div    mult   sub"
+        "sev    eig    nin    add"
+        "fou    fiv    six    mod"
+        "one    two    thr    equ"
+        "zero   dot    b      equ";
+}
+
+/* --- Header Styling --- */
+.brand-title {
+    grid-area: header;
+    font-size: 1rem;
+    color: #888;
+    margin: 0 0 10px 5px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* --- Screen Styling --- */
+.display {
+    grid-area: screen;
+    height: 70px;
+    width: 100%;
+    box-sizing: border-box; /* Important so padding doesn't break layout */
+    background-color: #383838; /* Dark LCD background */
+    border: none;
+    color: white;
+    font-size: 2.5rem;
+    text-align: right;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+}
+
+/* --- General Button Styling --- */
+/* 1. Base Button Style (The "Up" State) */
+/* 1. Base Button Style (Normal State) */
+button {
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    border: none;
+    border-radius: 6px;
+    background-color: #4a4a4a;
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 500;
+    cursor: pointer;
+    
+    /* Keep the shadow static (it won't move) */
+    box-shadow: 0 4px 0 #333;
+
+    /* FADE OUT: When you release, the glow takes 0.2s to disappear */
+    transition: background-color 0.2s, box-shadow 0.2s, color 0.2s;
+}
+
+/* 2. The "Magic Blur" Effect (Active State) */
+button:active, 
+button.pressed {
+    /* INSTANT ON: The glow appears immediately with no delay */
+    transition: none;
+    
+    /* EFFECT 1: Flash Bright White */
+    background-color: #414040fa !important;
+    color: #000000 !important; /* Text turns black for contrast */
+    
+    /* EFFECT 2: The "Magic Blur" Glow */
+    
+    /* Ensure absolutely NO physical movement */
+    transform: none;
+}
+
+/* Optional: Different Glow Colors for Special Keys */
+
+/* Red Glow for AC */
+button.key-ac:active, button.key-ac.pressed {
+    background-color: #ff4d4d !important;
+    box-shadow: 0 0 20px #ff4d4d, 0 4px 0 #333;
+    color: white !important;
+}
+
+/* Blue Glow for Equal */
+button.key-equal:active, button.key-equal.pressed {
+    background-color: #00a8ff !important;
+    box-shadow: 0 0 20px #00a8ff, 0 4px 0 #333;
+    color: rgb(41, 37, 110) !important;
+}
+
+.key-ac:active, .key-ac.pressed { box-shadow: none; }
+.key-equal:active, .key-equal.pressed { box-shadow: none; }
+.key-backspace:active, .key-backspace.pressed { box-shadow: none; }
+
+
+button:hover {
+    background-color: #5a5a5a;
+}
+
+/* --- MAPPING BUTTONS TO GRID AREAS --- */
+
+/* Numbers */
+.key-0 { grid-area: zero; }
+.key-1 { grid-area: one; }
+.key-2 { grid-area: two; }
+.key-3 { grid-area: thr; }
+.key-4 { grid-area: fou; }
+.key-5 { grid-area: fiv; }
+.key-6 { grid-area: six; }
+.key-7 { grid-area: sev; }
+.key-8 { grid-area: eig; }
+.key-9 { grid-area: nin; }
+.key-dot { grid-area: dot; }
+
+/* Operators */
+.key-div { grid-area: div; background-color: #333; }
+.key-mult { grid-area: mult; background-color: #333; }
+.key-sub { grid-area: sub; background-color: #333; }
+.key-add { grid-area: add; background-color: #333; }
+.key-mod { grid-area: mod; background-color: #333; }
+
+/* Special Action Keys */
+.key-ac { 
+    grid-area: clear; 
+    background-color: #d9534f; /* Red */
+    box-shadow: 0 4px 0 #c9302c;
+}
+
+.key-equal { 
+    grid-area: equ; 
+    background-color: #0078d7; /* Blue */
+    box-shadow: 0 4px 0 #005a9e;
+    
+    /* Override square ratio to allow it to be tall */
+    aspect-ratio: auto; 
+    height: 100%; 
+}
+
+.key-backspace {
+    grid-area: b;
+    background-color: #e67e22; /* Orange */
+    box-shadow: 0 4px 0 #d35400;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+}
+
+/* Add this to your CSS file */
+.active-operator {
+    background-color: #333 !important; /* Bright Green */
+    color: rgb(84, 86, 21) !important;
+    box-shadow: inset 0 3px 5px rgba(0,0,0,0.3) !important; /* "Pressed in" look */
+    
+}
