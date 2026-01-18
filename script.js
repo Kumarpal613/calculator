@@ -75,6 +75,7 @@ function inputNumber(num) {
     currentInput = num;
     if (operator === null) {
       accumulator = "";
+      expressionDiv.innerText = accumulator;
     }
     waitingForSecond = false;
   } else if (
