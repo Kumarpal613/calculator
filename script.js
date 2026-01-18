@@ -204,6 +204,7 @@ function clearAll() {
 function deleteLast() {
   currentInput = display.value;
   currentInput = currentInput.slice(0, -1);
+  waitingForSecond = false;
 }
 
 function updateDisplay() {
