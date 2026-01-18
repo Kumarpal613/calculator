@@ -119,6 +119,7 @@ function handleOperator(nextOperator) {
       const result = calculate(firstOperand, inputValue, operator);
       currentInput = String(result);
       firstOperand = result;
+      accumulator += currentInput + " " + nextOperator + " ";
     }
   }
 
