@@ -1,9 +1,8 @@
 const display = document.querySelector(".display");
 const buttons = document.querySelectorAll("button");
 const expressionDiv = document.getElementById("expression");
-let accumulator = ""; 
-
-let currentInput = " ";
+let accumulator = "";
+let currentInput = "";
 let firstOperand = null;
 let operator = null;
 let waitingForSecond = false;
@@ -72,15 +71,20 @@ function isNumber(value) {
 }
 
 function inputNumber(num) {
-
   if (waitingForSecond) {
     currentInput = num;
-    if(operator === null){
+    if (operator === null) {
       accumulator = "";
     }
     waitingForSecond = false;
+  } else if (
+    currentInput.includes(".") &&
+    currentInput.includes(".") &&
+    currentInput.split(".")[1].length > 3
+  ) {
+    currentInput = currentInput;
   } else {
-    currentInput = currentInput === "0" ? num : currentInput + num;
+    currentInput = /^0+$/.test(currentInput) ? num : currentInput + num;
   }
 }
 
@@ -91,12 +95,24 @@ function inputDecimal() {
     return;
   }
 
-  if ( !currentInput.includes(".")) {
+  if (!currentInput.includes(".")) {
     currentInput += ".";
   }
 }
 
 function handleOperator(nextOperator) {
+  
+  if (operator && waitingForSecond) {
+    accumulator = accumulator.slice(0, -2);
+    accumulator += nextOperator + " " ;
+    if (firstOperand === null) {
+      firstOperand = inputValue;
+    }
+    expressionDiv.innerText = accumulator;
+    expressionDiv.scrollLeft = expressionDiv.scrollWidth;
+    returnn;
+  }
+
   const inputValue = parseFloat(currentInput);
   if (isNaN(inputValue) && nextOperator !== "-") return;
 
@@ -108,20 +124,23 @@ function handleOperator(nextOperator) {
 
   updateOperatorState(nextOperator);
 
-  if (operator && waitingForSecond) {
-    accumulator = accumulator.slice(0, -2) + nextOperator + " ";
-    operator = nextOperator;
-  }else{
-    accumulator += currentInput + " " + nextOperator + " ";
-    if (firstOperand === null) {
+  
+  if (firstOperand === null) {
       firstOperand = inputValue;
-    } else if (operator) {
+      if(accumulator.length === 0  ){
+        accumulator += currentInput + " "+ nextOperator + " ";
+      }else{
+        accumulator +=nextOperator + " ";
+      }
+      
+  } else if (operator) {
       const result = calculate(firstOperand, inputValue, operator);
-      currentInput = String(result);
       firstOperand = result;
       accumulator += currentInput + " " + nextOperator + " ";
-    }
   }
+  
+
+  currentInput = "";
 
   expressionDiv.innerText = accumulator;
   waitingForSecond = true;
@@ -141,18 +160,29 @@ function calculate(first, second, op) {
 
 function calculateResult() {
   updateOperatorState(null);
-  expressionDiv.innerText = accumulator + currentInput + " =";
 
-  if (operator === null || waitingForSecond) return;
+  if (operator === null && waitingForSecond) {
+    return;
+  }
 
-  const inputValue = parseFloat(currentInput);
-  const result = String(calculate(firstOperand, inputValue, operator));
-
-  if (result === "Error: Zero Division") {
-    currentInput = result;
-    firstOperand = null;
+  if (currentInput === "" && operator !== null) {
+    currentInput = String(firstOperand);
+    accumulator = accumulator.slice(0, -2);
+    expressionDiv.innerText = accumulator + " =";
   } else {
-    currentInput =  result; 
+    const inputValue = parseFloat(currentInput);
+    const result = String(calculate(firstOperand, inputValue, operator));
+    accumulator += currentInput;
+    expressionDiv.innerText = accumulator + " =";
+
+    if (result === "Error: Zero Division") {
+      currentInput = result;
+      firstOperand = null;
+      accumulator = "";
+      expressionDiv.innerText = accumulator;
+    } else {
+      currentInput = result;
+    }
   }
 
   firstOperand = null;
@@ -174,20 +204,18 @@ function clearAll() {
 function deleteLast() {
   currentInput = display.value;
   currentInput = currentInput.slice(0, -1);
-  waitingForSecond = false;
 }
 
 function updateDisplay() {
   let value = parseFloat(currentInput);
 
-  if(currentInput.includes(".") && currentInput.split(".")[1].length > 3){
+  if (currentInput.includes(".") && currentInput.split(".")[1].length > 3) {
     display.value = String(Math.round(value * 1000) / 1000);
-  }else{
+  } else {
     display.value = currentInput;
   }
 
   display.scrollLeft = display.scrollWidth;
-
 }
 
 function triggerFlashEffect(key) {
@@ -216,5 +244,3 @@ function updateOperatorState(activeOp) {
     if (activeBtn) activeBtn.classList.add("active-operator");
   }
 }
-
-
